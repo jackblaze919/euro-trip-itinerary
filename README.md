@@ -1,6 +1,6 @@
 # Euro Trip · May 2026
 
-Mobile-first interactive itinerary for a Berlin → Budapest → Salzburg → Munich → Amsterdam trip, May 7 – May 16, 2026.
+Mobile-first interactive itinerary for a Berlin → Budapest → Salzburg → Munich → Amsterdam trip, May 7 – May 15, 2026 (then on to Barcelona, not in this app).
 
 Built with **Vite + React + TailwindCSS**. Static, no backend, no API keys.
 

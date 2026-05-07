@@ -102,7 +102,7 @@ export default function App() {
     const url = window.location.href;
     const data = {
       title: 'Euro Trip Itinerary',
-      text: 'Our Euro Trip itinerary — May 7–16',
+      text: 'Our Euro Trip itinerary — May 7–15',
       url,
     };
     if (navigator.share) {
@@ -567,7 +567,7 @@ export default function App() {
           <div className="flex-1 min-w-0">
             <div className="text-[9px] uppercase tracking-[0.28em] text-gold-400 font-semibold">Euro Trip</div>
             <div className="font-display text-[14px] font-semibold leading-tight text-cream-50 truncate">
-              May 7 – 16, 2026
+              May 7 – 15, 2026
             </div>
           </div>
           <button
