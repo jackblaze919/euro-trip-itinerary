@@ -211,18 +211,18 @@ export default function App() {
         <div className="text-[12px] text-cream-100/55 tnum mt-0.5">
           {todayCards.length} stops planned
         </div>
-        <div className="mt-3 flex flex-wrap gap-2">
-          <button
-            onClick={() => copyDay(today)}
-            className="inline-flex items-center gap-1.5 rounded-full bg-gold-500 text-navy-950 text-[11px] font-semibold uppercase tracking-widest px-3 py-1.5 hover:bg-gold-400"
-          >
-            ❏ Copy today
-          </button>
+        <div className="mt-4 flex flex-wrap gap-2">
           <button
             onClick={shareTrip}
-            className="inline-flex items-center gap-1.5 rounded-full border border-cream-100/15 bg-transparent hover:border-cream-100/35 text-[11px] uppercase tracking-widest font-semibold px-3 py-1.5 text-cream-100/85"
+            className="inline-flex items-center justify-center gap-1.5 min-h-[44px] rounded-full bg-gold-500 text-navy-950 text-[12px] font-semibold uppercase tracking-widest px-4 hover:bg-gold-400 active:scale-[0.98] transition"
           >
             ↗ Share trip link
+          </button>
+          <button
+            onClick={() => copyDay(today)}
+            className="inline-flex items-center justify-center gap-1.5 min-h-[44px] rounded-full border border-cream-100/20 bg-navy-800/50 hover:border-cream-100/40 text-[12px] font-semibold uppercase tracking-widest px-4 text-cream-100/85 active:scale-[0.98] transition"
+          >
+            ❏ Copy today
           </button>
         </div>
       </div>
@@ -296,11 +296,11 @@ export default function App() {
       {/* Must Book Soon */}
       {mustBookSoon.length > 0 && (
         <div className="panel rounded-2xl p-4">
-          <div className="flex items-baseline justify-between mb-2">
+          <div className="flex items-center justify-between mb-2">
             <h2 className="font-display text-[18px] font-semibold text-cream-50">Must Book Soon</h2>
             <button
               onClick={() => setTab('bookings')}
-              className="text-[10px] uppercase tracking-widest text-gold-400 hover:text-gold-300"
+              className="inline-flex items-center min-h-[36px] rounded-full border border-gold-500/35 bg-gold-500/10 px-3 text-[10px] uppercase tracking-widest text-gold-400 hover:border-gold-500/60 active:scale-[0.98] transition"
             >
               All bookings →
             </button>
@@ -344,9 +344,9 @@ export default function App() {
         <div className="px-4">
           <button
             onClick={() => setActiveCity(null)}
-            className="text-[11px] uppercase tracking-widest text-cream-100/55 hover:text-cream-100/85 mb-2"
+            className="inline-flex items-center gap-1 min-h-[40px] rounded-full border border-cream-100/15 bg-navy-800/50 hover:border-cream-100/35 text-[11px] uppercase tracking-widest font-semibold text-cream-100/75 px-3 mb-3 active:scale-[0.98] transition"
           >
-            ← All cities
+            <span aria-hidden>←</span> All cities
           </button>
           <div className="panel-strong rounded-2xl p-4 relative overflow-hidden">
             <div className="absolute right-3 top-3 opacity-90">
@@ -402,26 +402,41 @@ export default function App() {
 
         {/* Refine collapse */}
         <div className="px-4">
-          <button
-            onClick={() => setRefineOpen((v) => !v)}
-            className="w-full inline-flex items-center justify-between rounded-xl border border-cream-100/10 bg-navy-800/40 hover:bg-navy-800/60 px-3 py-2 text-[12px]"
-          >
-            <span className="uppercase tracking-widest text-cream-100/65 font-semibold">
-              Refine
-              {(search || reserveOnly || under25) && (
-                <span className="ml-2 text-gold-400">·</span>
-              )}
-            </span>
-            <span className="text-cream-100/40 text-sm">{refineOpen ? '−' : '+'}</span>
-          </button>
+          {(() => {
+            const activeCount = (search ? 1 : 0) + (reserveOnly ? 1 : 0) + (under25 ? 1 : 0);
+            return (
+              <button
+                onClick={() => setRefineOpen((v) => !v)}
+                className={
+                  'w-full inline-flex items-center justify-between gap-2 rounded-xl border min-h-[48px] px-4 transition active:scale-[0.99] ' +
+                  (refineOpen || activeCount
+                    ? 'border-gold-500/40 bg-gold-500/10 text-gold-400'
+                    : 'border-cream-100/15 bg-navy-800/50 text-cream-100/80 hover:border-cream-100/30')
+                }
+              >
+                <span className="inline-flex items-center gap-2">
+                  <span aria-hidden className="text-[14px] leading-none">⌥</span>
+                  <span className="uppercase tracking-widest font-semibold text-[12px]">
+                    Search & filter
+                  </span>
+                  {activeCount > 0 && (
+                    <span className="ml-1 inline-flex items-center justify-center text-[10px] font-bold tnum bg-gold-500 text-navy-950 rounded-full w-5 h-5">
+                      {activeCount}
+                    </span>
+                  )}
+                </span>
+                <span className="text-base leading-none">{refineOpen ? '−' : '+'}</span>
+              </button>
+            );
+          })()}
           {refineOpen && (
-            <div className="mt-3 space-y-2.5">
+            <div className="mt-3 space-y-3">
               <SearchBar value={search} onChange={setSearch} placeholder={`Search in ${c.name}…`} />
               <div className="flex flex-wrap gap-2">
                 <button
                   onClick={() => setReserveOnly((v) => !v)}
                   className={
-                    'rounded-full px-3 py-1.5 text-[11px] uppercase tracking-widest font-semibold border transition ' +
+                    'inline-flex items-center min-h-[40px] rounded-full px-4 text-[11px] uppercase tracking-widest font-semibold border transition active:scale-[0.98] ' +
                     (reserveOnly
                       ? 'bg-burgundy-500/20 border-burgundy-400/55 text-burgundy-400'
                       : 'bg-transparent border-cream-100/15 text-cream-100/65 hover:border-cream-100/35')
@@ -432,7 +447,7 @@ export default function App() {
                 <button
                   onClick={() => setUnder25((v) => !v)}
                   className={
-                    'rounded-full px-3 py-1.5 text-[11px] uppercase tracking-widest font-semibold border transition ' +
+                    'inline-flex items-center min-h-[40px] rounded-full px-4 text-[11px] uppercase tracking-widest font-semibold border transition active:scale-[0.98] ' +
                     (under25
                       ? 'bg-sage-500/20 border-sage-400/55 text-sage-400'
                       : 'bg-transparent border-cream-100/15 text-cream-100/65 hover:border-cream-100/35')

@@ -25,11 +25,11 @@ export default function TimelineDay({
       <div className="flex items-center gap-3 px-1">
         <button
           onClick={() => setOpen((o) => !o)}
-          className="flex-1 flex items-center gap-3 text-left"
+          className="flex-1 flex items-center gap-3 text-left min-h-[44px] py-1"
         >
           <div
             className={
-              'shrink-0 rounded-md px-2.5 py-1.5 text-[10px] font-semibold uppercase tracking-widest border tnum ' +
+              'shrink-0 rounded-md px-2.5 py-2 text-[10px] font-semibold uppercase tracking-widest border tnum ' +
               (isToday
                 ? 'bg-gold-500 text-navy-950 border-gold-500 pulse-gold'
                 : 'bg-navy-800/60 border-cream-100/10 text-cream-100/75')
@@ -45,13 +45,13 @@ export default function TimelineDay({
               {sorted.length} stops · {totalDone}/{sorted.length} done
             </div>
           </div>
-          <div className="shrink-0 text-cream-100/35 text-sm">{open ? '−' : '+'}</div>
+          <div className="shrink-0 text-cream-100/35 text-base">{open ? '−' : '+'}</div>
         </button>
         {onCopyDay && (
           <button
             onClick={() => onCopyDay(date)}
             title="Copy day plan"
-            className="shrink-0 inline-flex items-center gap-1 rounded-full border border-cream-100/10 bg-navy-800/60 hover:border-cream-100/30 text-[11px] px-2.5 py-1.5 text-cream-100/75"
+            className="shrink-0 inline-flex items-center gap-1 min-h-[40px] rounded-full border border-cream-100/15 bg-navy-800/60 hover:border-cream-100/30 text-[11px] uppercase tracking-widest font-semibold px-3 text-cream-100/75 active:scale-[0.98] transition"
           >
             ❏ Copy
           </button>
