@@ -112,6 +112,25 @@ export default function ItineraryCard({ card, isFav, isChecked, onToggleFav, onT
             <div className="rounded-lg border border-burgundy-400/30 bg-burgundy-500/5 p-2.5 text-cream-100/85">
               <div className="text-[10px] uppercase tracking-widest font-semibold text-burgundy-400 mb-1">Music fit</div>
               <div>{card.musicFit}</div>
+              {card.genreTags?.length > 0 && (
+                <div className="mt-2 flex flex-wrap gap-1">
+                  {card.genreTags.map((t) => (
+                    <span
+                      key={t}
+                      className="text-[11px] rounded-full px-2 py-0.5 bg-burgundy-500/10 text-cream-100/85 border border-burgundy-400/25"
+                    >
+                      {t}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {card.lineupCheck && (
+            <div className="rounded-lg border border-gold-500/30 bg-gold-500/5 p-2.5 text-cream-100/85">
+              <div className="text-[10px] uppercase tracking-widest font-semibold text-gold-400 mb-1">Check lineup</div>
+              <div>{card.lineupCheck}</div>
             </div>
           )}
 

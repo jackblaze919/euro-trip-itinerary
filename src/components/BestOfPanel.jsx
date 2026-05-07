@@ -19,6 +19,9 @@ export default function BestOfPanel({ cityId }) {
         const items = data[s.key];
         if (!items?.length) return null;
         const isAvoid = s.key === 'avoid';
+        const isNightlife = s.key === 'nightlife';
+        const note = isNightlife ? data.nightlifeNote : null;
+
         return (
           <div key={s.key} className="panel rounded-xl p-3.5">
             <div className="flex items-baseline justify-between mb-2">
@@ -29,21 +32,38 @@ export default function BestOfPanel({ cityId }) {
                 {s.hint}
               </span>
             </div>
-            <div className="flex flex-wrap gap-1.5">
-              {items.map((it) => (
-                <span
-                  key={it}
-                  className={
-                    'text-[12px] border rounded-full px-2.5 py-1 ' +
-                    (isAvoid
-                      ? 'border-burgundy-400/35 bg-burgundy-500/10 text-cream-100/85'
-                      : 'border-cream-100/15 bg-navy-700/40 text-cream-100/85')
-                  }
-                >
-                  {it}
-                </span>
-              ))}
-            </div>
+
+            {note && (
+              <div className="mb-2.5 text-[12px] text-cream-100/70 italic leading-snug">
+                {note}
+              </div>
+            )}
+
+            {isNightlife ? (
+              <ul className="space-y-1.5 text-[13px] leading-snug">
+                {items.map((it) => (
+                  <li key={it} className="text-cream-100/85 pl-3 border-l border-burgundy-400/35">
+                    {it}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div className="flex flex-wrap gap-1.5">
+                {items.map((it) => (
+                  <span
+                    key={it}
+                    className={
+                      'text-[12px] border rounded-full px-2.5 py-1 ' +
+                      (isAvoid
+                        ? 'border-burgundy-400/35 bg-burgundy-500/10 text-cream-100/85'
+                        : 'border-cream-100/15 bg-navy-700/40 text-cream-100/85')
+                    }
+                  >
+                    {it}
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
         );
       })}
