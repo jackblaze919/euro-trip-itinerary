@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import MapLinkButton from './MapLinkButton.jsx';
 
 const CAT_META = {
-  food:      { dot: '#d6b366', label: 'Food',      icon: '🍽' },
-  beer:      { dot: '#c9a14a', label: 'Beer',      icon: '🍺' },
-  daytime:   { dot: '#7da38e', label: 'Daytime',   icon: '🏛' },
-  nightlife: { dot: '#a8525a', label: 'Nightlife', icon: '♪'  },
-  travel:    { dot: '#8aa3c2', label: 'Travel',    icon: '✈' },
-  recovery:  { dot: '#9aab9a', label: 'Recovery',  icon: '✦' },
+  food:      { dot: '#d6b366', label: 'Food'      },
+  beer:      { dot: '#c9a14a', label: 'Beer'      },
+  daytime:   { dot: '#7da38e', label: 'Daytime'   },
+  nightlife: { dot: '#a8525a', label: 'Nightlife' },
+  travel:    { dot: '#8aa3c2', label: 'Travel'    },
+  recovery:  { dot: '#9aab9a', label: 'Recovery'  },
 };
 
 function ReserveChip({ value }) {
@@ -32,19 +32,18 @@ function ReserveChip({ value }) {
   );
 }
 
-export default function ItineraryCard({ card, isFav, isHidden, isChecked, onToggleFav, onToggleHide, onToggleCheck }) {
-  const meta = CAT_META[card.category] || { dot: '#a89c7a', label: card.category, icon: '·' };
+export default function ItineraryCard({ card, isFav, isChecked, onToggleFav, onToggleCheck }) {
+  const meta = CAT_META[card.category] || { dot: '#a89c7a', label: card.category };
   const [open, setOpen] = useState(false);
 
   return (
     <div
       className={
         'group panel rounded-xl overflow-hidden transition ' +
-        (isHidden ? 'opacity-40 ' : '') +
         (card.priority ? 'shadow-[inset_0_0_0_1px_rgba(201,161,74,0.30)] ' : '')
       }
     >
-      {/* Header row */}
+      {/* Header row — minimal: time, category dot, title, location, price, reserve */}
       <button
         onClick={() => setOpen((o) => !o)}
         className="w-full text-left px-3.5 py-3 flex items-start gap-3"
@@ -76,16 +75,6 @@ export default function ItineraryCard({ card, isFav, isHidden, isChecked, onTogg
             </span>
             <span className="text-cream-100/15">·</span>
             <ReserveChip value={card.reserve} />
-            {card.foodWarning && (
-              <span className="inline-flex items-center gap-1 text-[10px] uppercase tracking-wider font-semibold border rounded-full px-2 py-0.5 border-burgundy-400/50 text-burgundy-400 bg-burgundy-500/10">
-                ⚠ Food warning
-              </span>
-            )}
-            {card.priority && (
-              <span className="inline-flex items-center gap-1 text-[10px] uppercase tracking-wider font-semibold border rounded-full px-2 py-0.5 border-gold-500/50 text-gold-400 bg-gold-500/10">
-                ★ Priority
-              </span>
-            )}
           </div>
         </div>
 
@@ -98,6 +87,22 @@ export default function ItineraryCard({ card, isFav, isHidden, isChecked, onTogg
       {open && (
         <div className="px-3.5 pb-3.5 -mt-1 space-y-3 text-[13px]">
           <div className="hairline" />
+
+          {/* Secondary chips moved into expanded view */}
+          {(card.foodWarning || card.priority) && (
+            <div className="flex flex-wrap gap-1.5">
+              {card.foodWarning && (
+                <span className="inline-flex items-center gap-1 text-[10px] uppercase tracking-wider font-semibold border rounded-full px-2 py-0.5 border-burgundy-400/50 text-burgundy-400 bg-burgundy-500/10">
+                  ⚠ Food warning
+                </span>
+              )}
+              {card.priority && (
+                <span className="inline-flex items-center gap-1 text-[10px] uppercase tracking-wider font-semibold border rounded-full px-2 py-0.5 border-gold-500/50 text-gold-400 bg-gold-500/10">
+                  ★ Priority
+                </span>
+              )}
+            </div>
+          )}
 
           {card.description && (
             <p className="text-cream-100/80 leading-relaxed">{card.description}</p>
@@ -137,7 +142,7 @@ export default function ItineraryCard({ card, isFav, isHidden, isChecked, onTogg
           )}
 
           {card.bookingHint && (
-            <div className="rounded-lg border border-gold-500/25 bg-gold-500/5 p-2.5">
+            <div className="rounded-lg border border-gold-500/25 bg-gold-500/10 p-2.5">
               <div className="text-[10px] uppercase tracking-widest font-semibold text-gold-400 mb-1">Booking</div>
               <div className="text-cream-100/85">{card.bookingHint}</div>
               {card.bookingUrl && (
@@ -153,7 +158,7 @@ export default function ItineraryCard({ card, isFav, isHidden, isChecked, onTogg
             </div>
           )}
 
-          {/* Action row */}
+          {/* Action row — only Open in Maps, Mark done, Save */}
           <div className="flex flex-wrap items-center gap-2 pt-1">
             <MapLinkButton url={card.mapUrl} compact />
 
@@ -179,18 +184,6 @@ export default function ItineraryCard({ card, isFav, isHidden, isChecked, onTogg
               }
             >
               {isFav ? '★ Saved' : '☆ Save'}
-            </button>
-
-            <button
-              onClick={() => onToggleHide(card.id)}
-              className={
-                'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-medium transition active:scale-[0.98] border ' +
-                (isHidden
-                  ? 'bg-cream-100/10 text-cream-50 border-cream-100/30'
-                  : 'bg-transparent text-cream-100/55 border-cream-100/10 hover:border-cream-100/30')
-              }
-            >
-              {isHidden ? '↺ Unhide' : '✕ Skip'}
             </button>
           </div>
         </div>

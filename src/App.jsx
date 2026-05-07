@@ -2,10 +2,10 @@ import React, { useEffect, useMemo, useState } from 'react';
 import {
   ITINERARY,
   CITIES,
+  BOOK_NOW,
   TRIP,
 } from './data/itinerary.js';
 import CitySelector from './components/CitySelector.jsx';
-import CategoryFilters from './components/CategoryFilters.jsx';
 import TimelineDay from './components/TimelineDay.jsx';
 import Checklist from './components/Checklist.jsx';
 import BestOfPanel from './components/BestOfPanel.jsx';
@@ -44,113 +44,30 @@ function useStoredSet(key) {
   return [set, toggle];
 }
 
-const ROUTE = ['budapest', 'salzburg', 'munich', 'amsterdam'];
-
-// ─── Tiny inline route line: dotted gold curve between city codes ──────
-function RouteStrip({ activeCity, onPick }) {
-  return (
-    <div className="relative">
-      <div
-        aria-hidden
-        className="absolute left-3 right-3 top-1/2 -translate-y-1/2 h-px"
-        style={{
-          backgroundImage:
-            'linear-gradient(to right, rgba(201,161,74,0.55) 0, rgba(201,161,74,0.55) 4px, transparent 4px, transparent 8px)',
-          backgroundSize: '8px 1px',
-        }}
-      />
-      <div className="relative flex items-center justify-between gap-1 overflow-x-auto no-scrollbar">
-        {ROUTE.map((id) => {
-          const c = CITIES.find((x) => x.id === id);
-          const active = activeCity === id;
-          return (
-            <button
-              key={id}
-              onClick={() => onPick(id)}
-              className={
-                'shrink-0 inline-flex flex-col items-center px-2.5 py-1.5 rounded-md text-[10px] font-semibold uppercase tracking-widest border transition tnum ' +
-                (active
-                  ? 'bg-gold-500 border-gold-500 text-navy-950'
-                  : 'bg-navy-900 border-cream-100/15 text-cream-100/75 hover:border-cream-100/35')
-              }
-            >
-              <span>{c.code}</span>
-              <span className="text-[8px] mt-0.5 opacity-70 normal-case tracking-wider">
-                {c.shortDates.replace(' May', '')}
-              </span>
-            </button>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
+const CITY_CATEGORIES = [
+  { id: 'plan',      label: 'Plan',      hint: 'All stops by day' },
+  { id: 'food',      label: 'Food',      hint: 'Eat here' },
+  { id: 'beer',      label: 'Beer',      hint: 'Drink here' },
+  { id: 'nightlife', label: 'Nightlife', hint: 'Dance here' },
+  { id: 'mustbook',  label: 'Must Book', hint: 'Reserve / ticketed' },
+];
 
 export default function App() {
   const today = getTripToday();
-  const [tab, setTab] = useState('overview');
-  const [activeCity, setActiveCity] = useState('budapest');
-  const [category, setCategory] = useState('all');
+  const [tab, setTab] = useState('today');
+  const [activeCity, setActiveCity] = useState(null); // null = show 4 city cards; otherwise drilled in
+  const [cityCategory, setCityCategory] = useState('plan');
+  const [refineOpen, setRefineOpen] = useState(false);
   const [search, setSearch] = useState('');
   const [reserveOnly, setReserveOnly] = useState(false);
   const [under25, setUnder25] = useState(false);
   const [toast, setToast] = useState(null);
 
   const [favs, toggleFav] = useStoredSet('et:favs');
-  const [hidden, toggleHide] = useStoredSet('et:hidden');
   const [checked, toggleCheck] = useStoredSet('et:checked');
   const [bookChecked, toggleBookChecked] = useStoredSet('et:bookings');
 
-  const storage = { favs, toggleFav, hidden, toggleHide, checked, toggleCheck };
-
-  const filtered = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    return ITINERARY.filter((c) => {
-      if (tab === 'cities' && c.city !== activeCity) return false;
-      if (category !== 'all') {
-        if (category === 'bookings') {
-          if (!(c.reserve && c.reserve.toLowerCase().startsWith('yes')) && !c.priority) return false;
-        } else if (category === 'warnings') {
-          if (!c.foodWarning) return false;
-        } else if (c.category !== category) return false;
-      }
-      if (reserveOnly && !(c.reserve && c.reserve.toLowerCase().startsWith('yes'))) return false;
-      if (under25) {
-        const m = (c.price || '').match(/€\s*(\d+)/);
-        if (!m) return false;
-        if (parseInt(m[1], 10) > 25) return false;
-      }
-      if (q) {
-        const hay = [
-          c.title, c.location, c.description, c.city, c.category,
-          ...(c.safeOrder || []), ...(c.avoidOrder || []),
-          c.musicFit, c.bookingHint,
-        ].filter(Boolean).join(' ').toLowerCase();
-        if (!hay.includes(q)) return false;
-      }
-      return true;
-    });
-  }, [tab, activeCity, category, search, reserveOnly, under25]);
-
-  const byDate = useMemo(() => {
-    const m = new Map();
-    for (const c of filtered) {
-      if (!m.has(c.date)) m.set(c.date, []);
-      m.get(c.date).push(c);
-    }
-    for (const arr of m.values()) arr.sort((a, b) => a.time.localeCompare(b.time));
-    return [...m.entries()].sort(([a], [b]) => a.localeCompare(b));
-  }, [filtered]);
-
-  const tonight = useMemo(() => {
-    const todays = ITINERARY
-      .filter((c) => c.date === today)
-      .sort((a, b) => a.time.localeCompare(b.time));
-    const now = new Date();
-    const hhmm = now.toTimeString().slice(0, 5);
-    const upcoming = todays.find((c) => c.time >= hhmm) || todays[todays.length - 1];
-    return { all: todays, next: upcoming };
-  }, [today]);
+  const storage = { favs, toggleFav, checked, toggleCheck };
 
   function showToast(msg) {
     setToast(msg);
@@ -160,7 +77,7 @@ export default function App() {
   async function copyDay(date) {
     const dayCards = ITINERARY
       .filter((c) => c.date === date)
-      .sort((a, b) => a.time.localeCompare(b.time));
+      .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
     if (!dayCards.length) return;
     const lines = [
       `${dayCards[0].dayLabel} — Euro Trip`,
@@ -181,170 +98,256 @@ export default function App() {
     }
   }
 
+  async function shareTrip() {
+    const url = window.location.href;
+    const data = {
+      title: 'Euro Trip Itinerary',
+      text: 'Our Euro Trip itinerary — May 7–16',
+      url,
+    };
+    if (navigator.share) {
+      try { await navigator.share(data); return; } catch (e) { /* user cancelled */ }
+    }
+    try {
+      await navigator.clipboard.writeText(url);
+      showToast('Trip link copied');
+    } catch {
+      showToast('Copy failed — share manually');
+    }
+  }
+
+  // ─── Today helpers ────────────────────────────────────────────
+  const todayCards = useMemo(
+    () => ITINERARY
+      .filter((c) => c.date === today)
+      .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0)),
+    [today]
+  );
+
+  const upNext = useMemo(() => {
+    if (!todayCards.length) return null;
+    const now = new Date();
+    const nowSort = now.getHours() * 100 + now.getMinutes();
+    return todayCards.find((c) => c.sortOrder >= nowSort) || todayCards[todayCards.length - 1];
+  }, [todayCards]);
+
+  const tonightItems = useMemo(
+    () => todayCards.filter((c) => c.category === 'nightlife'),
+    [todayCards]
+  );
+
+  const mustBookSoon = useMemo(() => {
+    // Open priority cards in next 4 days that need reservation
+    const todayD = new Date(today + 'T00:00:00');
+    const horizon = new Date(todayD); horizon.setDate(horizon.getDate() + 4);
+    return ITINERARY
+      .filter((c) => {
+        const d = new Date(c.date + 'T00:00:00');
+        if (d < todayD || d > horizon) return false;
+        if (!c.priority) return false;
+        if (checked.has(c.id)) return false;
+        return true;
+      })
+      .sort((a, b) => a.startKey.localeCompare(b.startKey))
+      .slice(0, 4);
+  }, [today, checked]);
+
+  // ─── Cities filtering ─────────────────────────────────────────
+  const filteredCityCards = useMemo(() => {
+    if (!activeCity) return [];
+    const q = search.trim().toLowerCase();
+    return ITINERARY.filter((c) => {
+      if (c.city !== activeCity) return false;
+
+      // Top-level category tile filter
+      if (cityCategory !== 'plan') {
+        if (cityCategory === 'mustbook') {
+          if (!c.priority) return false;
+        } else if (c.category !== cityCategory) {
+          return false;
+        }
+      }
+
+      // Refine
+      if (reserveOnly && !(c.reserve && c.reserve.toLowerCase().startsWith('yes'))) return false;
+      if (under25) {
+        if (c.isFree) {
+          // Allow
+        } else if (c.priceMaxEUR == null || c.priceMaxEUR > 25) {
+          return false;
+        }
+      }
+      if (q) {
+        const hay = [
+          c.title, c.location, c.description, c.city, c.category,
+          ...(c.safeOrder || []), ...(c.avoidOrder || []),
+          c.musicFit, c.bookingHint,
+        ].filter(Boolean).join(' ').toLowerCase();
+        if (!hay.includes(q)) return false;
+      }
+      return true;
+    });
+  }, [activeCity, cityCategory, search, reserveOnly, under25]);
+
+  const filteredByDate = useMemo(() => {
+    const m = new Map();
+    for (const c of filteredCityCards) {
+      if (!m.has(c.date)) m.set(c.date, []);
+      m.get(c.date).push(c);
+    }
+    return [...m.entries()].sort(([a], [b]) => a.localeCompare(b));
+  }, [filteredCityCards]);
+
   // ─── Sub-views ────────────────────────────────────────────────
-  const renderOverview = () => (
-    <div className="space-y-5 px-4">
-      {/* Hero — boutique-magazine feel */}
-      <div className="relative overflow-hidden rounded-2xl panel-strong p-5 pt-6">
-        <div className="absolute inset-0 -z-10 bg-atlas opacity-100" />
-
-        <div className="text-[10px] uppercase tracking-[0.28em] text-gold-400 font-semibold">
-          Spring · 2026
+  const renderToday = () => (
+    <div className="space-y-4 px-4">
+      {/* Today header */}
+      <div className="panel-strong rounded-2xl p-4 relative overflow-hidden">
+        <div className="absolute inset-0 -z-10 bg-atlas opacity-90" />
+        <div className="text-[10px] uppercase tracking-[0.22em] text-gold-400 font-semibold">Today</div>
+        <div className="font-display text-[24px] font-semibold leading-tight text-cream-50 mt-1">
+          {todayCards[0]?.dayLabel || 'Trip starts soon'}
         </div>
-        <h1 className="font-display text-[34px] sm:text-[38px] leading-[1.05] font-semibold text-cream-50 mt-1.5">
-          Euro Trip<br/>Itinerary
-        </h1>
-        <div className="text-[13px] text-cream-100/70 mt-2 font-display italic">
-          Budapest <span className="text-gold-400">→</span> Salzburg <span className="text-gold-400">→</span> Munich <span className="text-gold-400">→</span> Amsterdam
+        <div className="text-[12px] text-cream-100/55 tnum mt-0.5">
+          {todayCards.length} stops planned
         </div>
-
-        <div className="mt-3 inline-flex items-center gap-2 text-[11px] text-cream-100/55 uppercase tracking-widest">
-          <span className="tnum">May 7 – 16</span>
-          <span className="text-gold-500">·</span>
-          <span className="tnum">{ITINERARY.length} stops</span>
-        </div>
-
-        <div className="gold-rule mt-5" />
-
-        <div className="mt-4">
-          <RouteStrip activeCity={activeCity} onPick={(id) => { setTab('cities'); setActiveCity(id); }} />
+        <div className="mt-3 flex flex-wrap gap-2">
+          <button
+            onClick={() => copyDay(today)}
+            className="inline-flex items-center gap-1.5 rounded-full bg-gold-500 text-navy-950 text-[11px] font-semibold uppercase tracking-widest px-3 py-1.5 hover:bg-gold-400"
+          >
+            ❏ Copy today
+          </button>
+          <button
+            onClick={shareTrip}
+            className="inline-flex items-center gap-1.5 rounded-full border border-cream-100/15 bg-transparent hover:border-cream-100/35 text-[11px] uppercase tracking-widest font-semibold px-3 py-1.5 text-cream-100/85"
+          >
+            ↗ Share trip link
+          </button>
         </div>
       </div>
 
-      {/* Up next */}
-      {tonight.next && (
-        <div className="panel rounded-2xl p-4">
+      {/* Up Next */}
+      {upNext && (
+        <button
+          onClick={() => {
+            // Scroll the corresponding card into view by clicking it open
+            const el = document.getElementById('today-' + upNext.id);
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }}
+          className="w-full text-left panel rounded-2xl p-4 transition active:scale-[0.99]"
+        >
           <div className="flex items-start justify-between gap-3">
             <div className="flex-1 min-w-0">
-              <div className="text-[10px] uppercase tracking-[0.22em] text-gold-400 font-semibold">
-                Up Next
-              </div>
-              <div className="font-display text-[20px] font-semibold leading-tight text-cream-50 mt-1">
-                {tonight.next.title}
+              <div className="text-[10px] uppercase tracking-[0.22em] text-gold-400 font-semibold">Up Next</div>
+              <div className="font-display text-[20px] font-semibold leading-tight text-cream-50 mt-1 truncate">
+                {upNext.title}
               </div>
               <div className="text-[12px] text-cream-100/55 mt-0.5 tnum">
-                {tonight.next.time} · {tonight.next.location}
+                {upNext.time} · {upNext.location}
               </div>
             </div>
-            <div className="shrink-0 font-display text-[28px] tnum text-gold-400 leading-none pulse-gold rounded-full px-1">
-              {tonight.next.time.split(':')[0]}
+            <div className="shrink-0 font-display text-[28px] tnum text-gold-400 leading-none">
+              {upNext.time.split(':')[0]}
             </div>
           </div>
-          {tonight.next.musicFit && (
-            <div className="mt-2.5 text-[12px] text-burgundy-400 italic">
-              {tonight.next.musicFit}
-            </div>
-          )}
-          <div className="mt-3 flex flex-wrap gap-2">
-            <MapLinkButton url={tonight.next.mapUrl} compact />
-            <button
-              onClick={() => copyDay(today)}
-              className="inline-flex items-center gap-1.5 rounded-full border border-cream-100/15 bg-transparent hover:border-cream-100/35 text-[11px] px-2.5 py-1 text-cream-100/75"
-            >
-              ❏ Copy today's plan
-            </button>
+        </button>
+      )}
+
+      {/* Tonight (if any nightlife today) */}
+      {tonightItems.length > 0 && (
+        <div className="panel rounded-2xl p-4">
+          <div className="flex items-baseline justify-between mb-2">
+            <h2 className="font-display text-[18px] font-semibold text-cream-50">Tonight</h2>
+            <span className="text-[10px] uppercase tracking-widest text-burgundy-400">After dark</span>
           </div>
+          <ul className="space-y-2 text-[13px]">
+            {tonightItems.map((c) => (
+              <li key={c.id} className="flex gap-3">
+                <span className="font-display tnum text-burgundy-400 text-[14px] w-12 shrink-0">{c.time}</span>
+                <span className="text-cream-100/85">
+                  {c.title}
+                  {c.musicFit && (
+                    <span className="block text-[11px] text-cream-100/55 italic mt-0.5">{c.musicFit}</span>
+                  )}
+                </span>
+              </li>
+            ))}
+          </ul>
         </div>
       )}
 
-      {/* Best music nights */}
-      <div className="panel rounded-2xl p-4">
-        <div className="flex items-baseline justify-between mb-3">
-          <h2 className="font-display text-[18px] font-semibold text-cream-50">Best Music Nights</h2>
-          <span className="text-[10px] uppercase tracking-widest text-cream-100/45">For our taste</span>
+      {/* Today's Timeline */}
+      {todayCards.length > 0 ? (
+        <div id="today-timeline">
+          <TimelineDay
+            date={today}
+            dayLabel={todayCards[0].dayLabel}
+            cards={todayCards}
+            isToday
+            storage={storage}
+            onCopyDay={copyDay}
+          />
         </div>
-        <ul className="space-y-2 text-[13px]">
-          <li className="flex gap-3">
-            <span className="font-display text-burgundy-400 tnum text-[14px] w-16 shrink-0">Sat 09</span>
-            <span className="text-cream-100/85">Pavilon Kert sunset → Pontoon · <span className="text-cream-100/55">Budapest</span></span>
-          </li>
-          <li className="flex gap-3">
-            <span className="font-display text-burgundy-400 tnum text-[14px] w-16 shrink-0">Sun 10</span>
-            <span className="text-cream-100/85">Sunday Sundown @ Pontoon · <span className="text-cream-100/55">Budapest</span></span>
-          </li>
-          <li className="flex gap-3">
-            <span className="font-display text-gold-400 tnum text-[14px] w-16 shrink-0">Fri 15</span>
-            <span className="text-cream-50 font-medium">Brighter Days @ The Loft · <span className="text-cream-100/55 font-normal">Amsterdam</span> <span className="text-gold-400">★</span></span>
-          </li>
-          <li className="flex gap-3">
-            <span className="font-display text-cream-100/55 tnum text-[14px] w-16 shrink-0">Backup</span>
-            <span className="text-cream-100/70">Disco Dolly · <span className="text-cream-100/55">Amsterdam</span></span>
-          </li>
-        </ul>
-      </div>
-
-      {/* Best beer */}
-      <div className="panel rounded-2xl p-4">
-        <div className="flex items-baseline justify-between mb-3">
-          <h2 className="font-display text-[18px] font-semibold text-cream-50">Best Beer Stops</h2>
-          <span className="text-[10px] uppercase tracking-widest text-cream-100/45">7 picks</span>
-        </div>
-        <div className="flex flex-wrap gap-1.5 text-[12px]">
-          {[
-            ['Élesztőház', 'Budapest'],
-            ['FIRST Craft Beer & BBQ', 'Budapest'],
-            ['Stiegl-Brauwelt', 'Salzburg'],
-            ['Augustiner Bräustübl', 'Salzburg'],
-            ['Augustiner-Keller', 'Munich'],
-            ['Hofbräuhaus', 'Munich'],
-            ['Brouwerij \'t IJ', 'Amsterdam'],
-          ].map(([name, city]) => (
-            <span
-              key={name}
-              className="border border-gold-500/35 bg-gold-500/10 rounded-full px-2.5 py-1 text-cream-100/90"
-            >
-              <span className="font-medium">{name}</span>
-              <span className="text-cream-100/45"> · {city}</span>
-            </span>
-          ))}
-        </div>
-      </div>
-
-      {/* Book These Now */}
-      <Checklist checked={bookChecked} onToggle={toggleBookChecked} />
-    </div>
-  );
-
-  const renderToday = () => (
-    <div className="space-y-4 px-4">
-      <div className="panel-strong rounded-2xl p-4">
-        <div className="text-[10px] uppercase tracking-[0.22em] text-gold-400 font-semibold">Today</div>
-        <div className="font-display text-[22px] font-semibold leading-tight text-cream-50 mt-1">
-          {tonight.all[0]?.dayLabel || 'Trip starts soon'}
-        </div>
-        <div className="text-[11px] text-cream-100/55 tnum mt-0.5">
-          {tonight.all.length} stops planned
-        </div>
-        <button
-          onClick={() => copyDay(today)}
-          className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-gold-500 text-navy-950 text-[11px] font-semibold uppercase tracking-widest px-3 py-1.5 hover:bg-gold-400"
-        >
-          ❏ Copy today's plan
-        </button>
-      </div>
-
-      {tonight.all.length > 0 ? (
-        <TimelineDay
-          date={today}
-          dayLabel={tonight.all[0].dayLabel}
-          cards={tonight.all}
-          isToday
-          storage={storage}
-          onCopyDay={copyDay}
-        />
       ) : (
         <div className="text-cream-100/55 text-sm italic">Nothing scheduled for today.</div>
+      )}
+
+      {/* Must Book Soon */}
+      {mustBookSoon.length > 0 && (
+        <div className="panel rounded-2xl p-4">
+          <div className="flex items-baseline justify-between mb-2">
+            <h2 className="font-display text-[18px] font-semibold text-cream-50">Must Book Soon</h2>
+            <button
+              onClick={() => setTab('bookings')}
+              className="text-[10px] uppercase tracking-widest text-gold-400 hover:text-gold-300"
+            >
+              All bookings →
+            </button>
+          </div>
+          <ul className="space-y-1.5 text-[13px]">
+            {mustBookSoon.map((c) => {
+              const d = new Date(c.date + 'T00:00:00');
+              const lbl = d.toLocaleDateString('en-US', { weekday: 'short' });
+              return (
+                <li key={c.id} className="flex items-center gap-3">
+                  <span className="font-display tnum text-gold-400 text-[13px] w-12 shrink-0 uppercase tracking-wider">{lbl}</span>
+                  <span className="text-cream-100/85 flex-1 truncate">{c.title}</span>
+                  <span className="text-[10px] text-cream-100/50 tnum shrink-0">{c.time}</span>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
       )}
     </div>
   );
 
   const renderCities = () => {
+    if (!activeCity) {
+      // Just show the 4 city cards
+      return (
+        <div className="space-y-4">
+          <div className="px-4">
+            <div className="font-display text-[22px] font-semibold text-cream-50">Pick a city</div>
+            <div className="text-[12px] text-cream-100/55 mt-0.5">Tap to open the city hub.</div>
+          </div>
+          <CitySelector activeCity={activeCity} onPick={(id) => { setActiveCity(id); setCityCategory('plan'); }} />
+        </div>
+      );
+    }
+
     const c = CITIES.find((x) => x.id === activeCity);
     return (
-      <div className="space-y-5">
-        <CitySelector activeCity={activeCity} onPick={setActiveCity} />
-
+      <div className="space-y-4">
+        {/* City header */}
         <div className="px-4">
+          <button
+            onClick={() => setActiveCity(null)}
+            className="text-[11px] uppercase tracking-widest text-cream-100/55 hover:text-cream-100/85 mb-2"
+          >
+            ← All cities
+          </button>
           <div className="panel-strong rounded-2xl p-4 relative overflow-hidden">
             <div className="absolute right-3 top-3 opacity-90">
               <CityMotif motif={c.motif} size={42} color={c.accentHex} />
@@ -368,40 +371,86 @@ export default function App() {
           </div>
         </div>
 
-        <div className="px-4 space-y-3">
-          <SearchBar value={search} onChange={setSearch} placeholder={`Search in ${c.name}…`} />
-          <CategoryFilters activeCategory={category} onPick={setCategory} />
-          <div className="flex flex-wrap gap-2">
-            <button
-              onClick={() => setReserveOnly((v) => !v)}
-              className={
-                'rounded-full px-3 py-1.5 text-[11px] uppercase tracking-widest font-semibold border transition ' +
-                (reserveOnly
-                  ? 'bg-burgundy-500/20 border-burgundy-400/55 text-burgundy-400'
-                  : 'bg-transparent border-cream-100/15 text-cream-100/65 hover:border-cream-100/35')
-              }
-            >
-              Reserve required
-            </button>
-            <button
-              onClick={() => setUnder25((v) => !v)}
-              className={
-                'rounded-full px-3 py-1.5 text-[11px] uppercase tracking-widest font-semibold border transition ' +
-                (under25
-                  ? 'bg-sage-500/20 border-sage-400/55 text-sage-400'
-                  : 'bg-transparent border-cream-100/15 text-cream-100/65 hover:border-cream-100/35')
-              }
-            >
-              Under €25
-            </button>
+        {/* Category tiles */}
+        <div className="overflow-x-auto no-scrollbar -mx-4 px-4">
+          <div className="flex gap-2 w-max">
+            {CITY_CATEGORIES.map((tile) => {
+              const active = cityCategory === tile.id;
+              return (
+                <button
+                  key={tile.id}
+                  onClick={() => setCityCategory(tile.id)}
+                  className={
+                    'shrink-0 rounded-xl px-3.5 py-2.5 text-left border transition active:scale-[0.99] ' +
+                    (active
+                      ? 'bg-cream-50 text-navy-900 border-cream-50 shadow-soft'
+                      : 'bg-transparent text-cream-100/75 border-cream-100/15 hover:border-cream-100/35')
+                  }
+                  style={{ minWidth: 110 }}
+                >
+                  <div className={'font-display text-[16px] font-semibold leading-none ' + (active ? '' : 'text-cream-50')}>
+                    {tile.label}
+                  </div>
+                  <div className={'text-[10px] uppercase tracking-widest mt-1.5 ' + (active ? 'text-navy-900/60' : 'text-cream-100/45')}>
+                    {tile.hint}
+                  </div>
+                </button>
+              );
+            })}
           </div>
         </div>
 
+        {/* Refine collapse */}
+        <div className="px-4">
+          <button
+            onClick={() => setRefineOpen((v) => !v)}
+            className="w-full inline-flex items-center justify-between rounded-xl border border-cream-100/10 bg-navy-800/40 hover:bg-navy-800/60 px-3 py-2 text-[12px]"
+          >
+            <span className="uppercase tracking-widest text-cream-100/65 font-semibold">
+              Refine
+              {(search || reserveOnly || under25) && (
+                <span className="ml-2 text-gold-400">·</span>
+              )}
+            </span>
+            <span className="text-cream-100/40 text-sm">{refineOpen ? '−' : '+'}</span>
+          </button>
+          {refineOpen && (
+            <div className="mt-3 space-y-2.5">
+              <SearchBar value={search} onChange={setSearch} placeholder={`Search in ${c.name}…`} />
+              <div className="flex flex-wrap gap-2">
+                <button
+                  onClick={() => setReserveOnly((v) => !v)}
+                  className={
+                    'rounded-full px-3 py-1.5 text-[11px] uppercase tracking-widest font-semibold border transition ' +
+                    (reserveOnly
+                      ? 'bg-burgundy-500/20 border-burgundy-400/55 text-burgundy-400'
+                      : 'bg-transparent border-cream-100/15 text-cream-100/65 hover:border-cream-100/35')
+                  }
+                >
+                  Reserve required
+                </button>
+                <button
+                  onClick={() => setUnder25((v) => !v)}
+                  className={
+                    'rounded-full px-3 py-1.5 text-[11px] uppercase tracking-widest font-semibold border transition ' +
+                    (under25
+                      ? 'bg-sage-500/20 border-sage-400/55 text-sage-400'
+                      : 'bg-transparent border-cream-100/15 text-cream-100/65 hover:border-cream-100/35')
+                  }
+                >
+                  Under €25
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Filtered timeline */}
         <div className="px-4 space-y-5">
-          {byDate.length === 0 ? (
+          {filteredByDate.length === 0 ? (
             <div className="text-cream-100/45 text-sm italic">No items match your filters.</div>
           ) : (
-            byDate.map(([date, cards]) => (
+            filteredByDate.map(([date, cards]) => (
               <TimelineDay
                 key={date}
                 date={date}
@@ -415,13 +464,16 @@ export default function App() {
           )}
         </div>
 
-        <div className="px-4">
-          <div className="flex items-baseline justify-between mb-3">
-            <h2 className="font-display text-[18px] font-semibold text-cream-50">Best of {c.name}</h2>
-            <span className="text-[10px] uppercase tracking-widest text-cream-100/45">Curated</span>
+        {/* Best of (only on Plan tile to reduce clutter) */}
+        {cityCategory === 'plan' && (
+          <div className="px-4 pt-2">
+            <div className="flex items-baseline justify-between mb-3">
+              <h2 className="font-display text-[18px] font-semibold text-cream-50">Best of {c.name}</h2>
+              <span className="text-[10px] uppercase tracking-widest text-cream-100/45">Curated</span>
+            </div>
+            <BestOfPanel cityId={activeCity} />
           </div>
-          <BestOfPanel cityId={activeCity} />
-        </div>
+        )}
       </div>
     );
   };
@@ -459,7 +511,7 @@ export default function App() {
             {favCards.map((c) => (
               <div key={c.id} className="panel rounded-xl p-3.5">
                 <div className="flex items-start gap-3">
-                  <div className="shrink-0 w-[58px] pr-2 border-r border-cream-100/10">
+                  <div className="shrink-0 w-[68px]">
                     <div className="font-display text-[22px] font-semibold leading-none tnum text-cream-50">{c.time}</div>
                     <div className="text-[10px] uppercase tracking-widest text-cream-100/40 mt-1">{c.category}</div>
                   </div>
@@ -488,7 +540,6 @@ export default function App() {
 
   return (
     <div className="min-h-full pb-28">
-      {/* Background atlas wash */}
       <div className="pointer-events-none fixed inset-0 -z-10 bg-atlas opacity-90" />
       <div className="pointer-events-none fixed inset-0 -z-20 bg-navy-900" />
 
@@ -504,21 +555,24 @@ export default function App() {
               May 7 – 16, 2026
             </div>
           </div>
-          <div className="text-[10px] uppercase tracking-widest rounded-full border border-cream-100/10 bg-navy-800/60 px-2 py-1 text-cream-100/65 tnum">
-            {ITINERARY.length} stops
-          </div>
+          <button
+            onClick={shareTrip}
+            title="Share trip link"
+            className="text-[10px] uppercase tracking-widest rounded-full border border-cream-100/15 bg-navy-800/60 hover:border-gold-500/50 px-2.5 py-1 text-cream-100/75"
+          >
+            Share ↗
+          </button>
         </div>
       </header>
 
       <main className="mx-auto max-w-md py-4 space-y-2">
-        {tab === 'overview' && renderOverview()}
         {tab === 'today'    && renderToday()}
         {tab === 'cities'   && renderCities()}
         {tab === 'bookings' && renderBookings()}
         {tab === 'favs'     && renderFavs()}
       </main>
 
-      <StickyNav active={tab} onChange={setTab} />
+      <StickyNav active={tab} onChange={(t) => { setTab(t); if (t === 'cities') { /* keep activeCity */ } }} />
 
       {toast && (
         <div className="fixed left-1/2 bottom-24 -translate-x-1/2 z-40 rounded-full bg-cream-50 text-navy-950 text-xs font-semibold px-4 py-2 shadow-soft">

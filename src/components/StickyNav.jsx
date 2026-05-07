@@ -1,11 +1,10 @@
 import React from 'react';
 
 const TABS = [
-  { id: 'overview',  label: 'Overview',  glyph: '◐' },
-  { id: 'today',     label: 'Today',     glyph: '✦' },
-  { id: 'cities',    label: 'Cities',    glyph: '◇' },
-  { id: 'bookings',  label: 'Book',      glyph: '✓' },
-  { id: 'favs',      label: 'Saved',     glyph: '★' },
+  { id: 'today',     label: 'Today',   glyph: '✦' },
+  { id: 'cities',    label: 'Cities',  glyph: '◇' },
+  { id: 'bookings',  label: 'Book',    glyph: '✓' },
+  { id: 'favs',      label: 'Saved',   glyph: '★' },
 ];
 
 export default function StickyNav({ active, onChange }) {

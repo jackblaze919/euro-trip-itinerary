@@ -177,6 +177,7 @@ export const ITINERARY = [
     date: '2026-05-07',
     dayLabel: 'Thu May 7 · Arrival Night',
     time: '00:00',
+    sortOrder: 2400,
     title: 'Szimpla Kert · Light ruin-bar night',
     category: 'nightlife',
     location: 'Kazinczy u. 14',
@@ -765,6 +766,7 @@ export const ITINERARY = [
     date: '2026-05-14',
     dayLabel: 'Thu May 14 · Amsterdam arrival',
     time: '00:00',
+    sortOrder: 2400,
     title: 'Disco Dolly · backup dance option',
     category: 'nightlife',
     location: 'Handboogstraat 11',
@@ -892,9 +894,60 @@ export const ITINERARY = [
   },
 ];
 
-// Decorate every card with mapUrl
+// ─────────── Post-process: mapUrl + sortOrder + structured price ───────────
+
+// Manual price overrides for cards whose price text doesn't auto-parse
+// to euros (e.g. HUF, "Already booked", "Pay food/drinks").
+const PRICE_OVERRIDES = {
+  'bud-0508-1500': { priceMinEUR: 37, priceMaxEUR: 42, isFree: false }, // ~14.8k–16.8k HUF
+  'bud-0507-1600': { priceMinEUR: 0, priceMaxEUR: 0, isFree: true },     // Already booked
+};
+
+function deriveSortOrder(c) {
+  if (typeof c.sortOrder === 'number') return c.sortOrder;
+  const m = (c.time || '00:00').match(/^(\d{1,2}):(\d{2})/);
+  if (!m) return 0;
+  return parseInt(m[1], 10) * 100 + parseInt(m[2], 10);
+}
+
+function derivePrice(c) {
+  if (PRICE_OVERRIDES[c.id]) return PRICE_OVERRIDES[c.id];
+  const text = c.price || '';
+  const t = text.toLowerCase().trim();
+  if (!t) return { priceMinEUR: null, priceMaxEUR: null, isFree: false };
+  if (/^(free|mostly free|already booked)/.test(t)) {
+    return { priceMinEUR: 0, priceMaxEUR: 0, isFree: true };
+  }
+  if (/huf/i.test(text)) {
+    return { priceMinEUR: null, priceMaxEUR: null, isFree: false };
+  }
+  // Pull every euro number from the string. Ranges like "€20–30 pp" or
+  // "€5–8 / beer" only have € on the first number; we still want both ends.
+  // We only do this if there's a € symbol *somewhere* — otherwise we treat
+  // it as unstructured (e.g. "Door / cheap", "Pay food/drinks") and skip.
+  if (!/€/.test(text)) {
+    return { priceMinEUR: null, priceMaxEUR: null, isFree: false };
+  }
+  const nums = [...text.matchAll(/(\d+(?:\.\d+)?)/g)].map((m) => parseFloat(m[1]));
+  if (!nums.length) {
+    return { priceMinEUR: null, priceMaxEUR: null, isFree: false };
+  }
+  return {
+    priceMinEUR: Math.min(...nums),
+    priceMaxEUR: Math.max(...nums),
+    isFree: false,
+  };
+}
+
 ITINERARY.forEach((c) => {
   c.mapUrl = mapsLink(c.mapQuery || `${c.title} ${c.city}`);
+  c.sortOrder = deriveSortOrder(c);
+  Object.assign(c, derivePrice(c));
+});
+
+// Cross-field convenience: timestamp for sorting across days
+ITINERARY.forEach((c) => {
+  c.startKey = `${c.date} ${String(c.sortOrder).padStart(4, '0')}`;
 });
 
 // ───────────────────────── Best-of lists ─────────────────────────
