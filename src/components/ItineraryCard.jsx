@@ -76,6 +76,18 @@ export default function ItineraryCard({ card, isFav, isChecked, onToggleFav, onT
             <span className="text-cream-100/15">·</span>
             <ReserveChip value={card.reserve} />
           </div>
+
+          {card.walkMinutesFromHostel != null && (
+            <div className="mt-1.5 text-[11px] text-cream-100/65 flex items-center gap-1.5">
+              <span aria-hidden className="text-gold-400">⌂</span>
+              <span>
+                {card.distanceFromHostelKm < 0.7
+                  ? `${card.walkMinutesFromHostel} min walk from hostel`
+                  : `${card.distanceFromHostelKm.toFixed(1)} km · ${card.walkMinutesFromHostel} min walk`}
+                {card.transitNote && card.distanceFromHostelKm >= 0.7 ? ` · ${card.transitNote}` : ''}
+              </span>
+            </div>
+          )}
         </div>
 
         <div className="shrink-0 self-center text-cream-100/35 text-sm pl-1">

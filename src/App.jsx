@@ -4,6 +4,7 @@ import {
   CITIES,
   BOOK_NOW,
   TRIP,
+  BUDAPEST_HOME_BASE,
 } from './data/itinerary.js';
 import CitySelector from './components/CitySelector.jsx';
 import TimelineDay from './components/TimelineDay.jsx';
@@ -13,6 +14,7 @@ import SearchBar from './components/SearchBar.jsx';
 import StickyNav from './components/StickyNav.jsx';
 import MapLinkButton from './components/MapLinkButton.jsx';
 import CityMotif from './components/CityMotif.jsx';
+import BudapestMap from './components/BudapestMap.jsx';
 
 function getTripToday() {
   const start = new Date(TRIP.startDate + 'T00:00:00');
@@ -58,6 +60,7 @@ export default function App() {
   const [activeCity, setActiveCity] = useState(null); // null = show 4 city cards; otherwise drilled in
   const [cityCategory, setCityCategory] = useState('plan');
   const [refineOpen, setRefineOpen] = useState(false);
+  const [walkFilter, setWalkFilter] = useState('all'); // Budapest only: 'all'|'near'|'walkable'|'ride'
   const [search, setSearch] = useState('');
   const [reserveOnly, setReserveOnly] = useState(false);
   const [under25, setUnder25] = useState(false);
@@ -168,6 +171,14 @@ export default function App() {
         }
       }
 
+      // Budapest-only walk filter
+      if (activeCity === 'budapest' && walkFilter !== 'all') {
+        if (!c.homeBaseTier) return false;
+        if (walkFilter === 'near' && c.homeBaseTier !== 'near') return false;
+        if (walkFilter === 'walkable' && !(c.homeBaseTier === 'near' || c.homeBaseTier === 'walkable')) return false;
+        if (walkFilter === 'ride' && c.homeBaseTier !== 'ride') return false;
+      }
+
       // Refine
       if (reserveOnly && !(c.reserve && c.reserve.toLowerCase().startsWith('yes'))) return false;
       if (under25) {
@@ -187,7 +198,7 @@ export default function App() {
       }
       return true;
     });
-  }, [activeCity, cityCategory, search, reserveOnly, under25]);
+  }, [activeCity, cityCategory, search, reserveOnly, under25, walkFilter]);
 
   const filteredByDate = useMemo(() => {
     const m = new Map();
@@ -364,12 +375,56 @@ export default function App() {
             <div className="text-[13px] text-cream-100/75 mt-2 font-display italic">
               {c.tagline}
             </div>
+            {activeCity === 'budapest' && (
+              <div className="mt-3 inline-flex items-center gap-1.5 text-[11px] rounded-full border border-gold-500/40 bg-gold-500/10 text-gold-400 px-2.5 py-1">
+                <span aria-hidden>⌂</span>
+                <span className="uppercase tracking-widest font-semibold">Base</span>
+                <span className="text-cream-100/85 normal-case font-normal">{BUDAPEST_HOME_BASE.shortName}</span>
+              </div>
+            )}
             <div
               className="absolute left-0 right-0 bottom-0 h-px"
               style={{ background: `linear-gradient(90deg, transparent, ${c.accentHex}88, transparent)` }}
             />
           </div>
         </div>
+
+        {/* Budapest mini-map (hub-only) */}
+        {activeCity === 'budapest' && (
+          <div className="px-4">
+            <BudapestMap />
+          </div>
+        )}
+
+        {/* Walk filter (Budapest only) */}
+        {activeCity === 'budapest' && (
+          <div className="overflow-x-auto no-scrollbar -mx-4 px-4">
+            <div className="flex gap-1.5 w-max">
+              {[
+                { id: 'all',      label: 'All distances' },
+                { id: 'near',     label: '⌂ Near hostel' },
+                { id: 'walkable', label: 'Walkable' },
+                { id: 'ride',     label: 'Requires ride' },
+              ].map((f) => {
+                const active = walkFilter === f.id;
+                return (
+                  <button
+                    key={f.id}
+                    onClick={() => setWalkFilter(f.id)}
+                    className={
+                      'shrink-0 inline-flex items-center min-h-[36px] rounded-full px-3.5 text-[11px] uppercase tracking-widest font-semibold border transition active:scale-[0.98] ' +
+                      (active
+                        ? 'bg-gold-500/20 border-gold-500/55 text-gold-400'
+                        : 'bg-transparent border-cream-100/15 text-cream-100/70 hover:border-cream-100/35')
+                    }
+                  >
+                    {f.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* Category tiles */}
         <div className="overflow-x-auto no-scrollbar -mx-4 px-4">

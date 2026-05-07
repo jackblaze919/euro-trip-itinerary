@@ -82,6 +82,15 @@ export const CATEGORIES = [
   { id: 'warnings',  label: 'Warnings',   emoji: '⚠️' },
 ];
 
+// Budapest home base — every Budapest itinerary item gets a distance from here.
+export const BUDAPEST_HOME_BASE = {
+  name: "Wombat's City Hostel Budapest",
+  shortName: "Wombat's Hostel",
+  address: 'Király u. 20, 1061 Budapest, Hungary',
+  lat: 47.5005,
+  lng: 19.0593,
+};
+
 export const FOOD_RULES = [
   'No pork, ham, bacon.',
   'No sausage unless clearly beef or chicken.',
@@ -152,6 +161,9 @@ export const ITINERARY = [
     safeOrder: ['Chicken paprikash', 'Beef goulash', 'Túrós csusza (cheese pasta)', 'Salads'],
     avoidOrder: ['Pork stew', 'Sausage plates', 'Anything with bacon'],
     foodWarning: true,
+    lat: 47.4969,
+    lng: 19.0590,
+    transitNote: 'very short walk',
     mapQuery: 'Gettó Gulyás Budapest',
     bookingHint: 'Call or use their site to reserve a 4-top',
     bookingUrl: searchLink('Getto Gulyas Budapest reservation'),
@@ -169,6 +181,9 @@ export const ITINERARY = [
     price: '€5–8 / beer',
     reserve: 'No',
     description: 'Massive Hungarian craft beer hall. Easy first round.',
+    lat: 47.4837,
+    lng: 19.0673,
+    transitNote: 'Bolt recommended',
     mapQuery: 'Élesztőház Budapest',
   },
   {
@@ -185,6 +200,9 @@ export const ITINERARY = [
     reserve: 'No',
     description: 'The OG ruin bar. Tourist-heavy but a must-do once.',
     musicFit: 'Mixed bar music — fine for a late drink, not a curated dance night.',
+    lat: 47.4972,
+    lng: 19.0617,
+    transitNote: 'very short walk',
     mapQuery: 'Szimpla Kert Budapest',
   },
 
@@ -232,6 +250,9 @@ export const ITINERARY = [
     price: '~14,800 HUF locker · ~16,800 HUF online fast-track',
     reserve: 'Yes',
     description: 'Iconic outdoor thermal pools. Book online to skip the queue.',
+    lat: 47.5187,
+    lng: 19.0817,
+    transitNote: 'M1 metro to Széchenyi fürdő (or Bolt ~9 min)',
     mapQuery: 'Széchenyi Thermal Bath Budapest',
     bookingHint: 'Book the fast-track locker ticket on the official site',
     bookingUrl: searchLink('Szechenyi Bath online ticket fast track'),
@@ -252,6 +273,9 @@ export const ITINERARY = [
     safeOrder: ['Beef goulash', 'Chicken paprikash', 'Grilled chicken', 'Catfish paprikash'],
     avoidOrder: ['Pork knuckle', 'Anything with bacon or kolbász (pork sausage)'],
     foodWarning: true,
+    lat: 47.5045,
+    lng: 19.0658,
+    transitNote: 'easy walk',
     mapQuery: 'Menza restaurant Budapest',
     bookingHint: 'Reserve via their site or phone',
     bookingUrl: searchLink('Menza Budapest reservation'),
@@ -272,6 +296,9 @@ export const ITINERARY = [
     foodWarning: true,
     safeOrder: ['Stick to beer', 'Beef brisket if available'],
     avoidOrder: ['Pulled pork', 'Pork ribs', 'Bacon-loaded sides'],
+    lat: 47.4977,
+    lng: 19.0588,
+    transitNote: 'very short walk',
     mapQuery: 'FIRST Craft Beer and BBQ Budapest',
   },
   {
@@ -289,6 +316,9 @@ export const ITINERARY = [
     musicFit: 'Best fit: vocal UKG, 2-step, disco house, French touch, nu-disco, funky/vocal house, and bright danceable club music. Aether nights vary — sometimes that lane, sometimes harder.',
     genreTags: ['Funky House', 'Vocal House'],
     lineupCheck: 'Check lineup first — avoid hard techno, industrial techno, dark 140, grime, dubstep, heavy UK bass, or experimental bass.',
+    lat: 47.5004,
+    lng: 19.0613,
+    transitNote: 'around the corner',
     mapQuery: 'Aether Club Budapest',
     bookingHint: 'Buy tix via Aether socials / Resident Advisor',
     bookingUrl: searchLink('Aether Club Budapest SOAKIN tickets'),
@@ -311,6 +341,9 @@ export const ITINERARY = [
     safeOrder: ['Hummus & pita', 'Grilled chicken skewers', 'Shakshuka', 'Lamb dishes', 'Falafel'],
     avoidOrder: ['Shrimp', 'Anything with shellfish'],
     foodWarning: true,
+    lat: 47.4983,
+    lng: 19.0644,
+    transitNote: 'short walk',
     mapQuery: 'Mazel Tov Budapest',
     bookingHint: 'Mazel Tov takes reservations online',
     bookingUrl: searchLink('Mazel Tov Budapest reservation'),
@@ -328,6 +361,9 @@ export const ITINERARY = [
     price: 'Mostly free',
     reserve: 'No',
     description: 'Cross over and walk the Castle district. Best skyline in town.',
+    lat: 47.5020,
+    lng: 19.0345,
+    transitNote: 'Tram 2 + walk uphill (or Bolt). Side-trip across the Danube.',
     mapQuery: 'Fisherman\'s Bastion Budapest',
   },
   {
@@ -357,6 +393,9 @@ export const ITINERARY = [
     description: 'Outdoor day-into-night party in City Park. Warm, bright, vocal — the safest curated daytime fit on the trip. 6–9 PM.',
     musicFit: 'Strong fit. Best fit: vocal UKG, 2-step, disco house, French touch, nu-disco, funky/vocal house, and bright danceable club music. Pavilon usually leans warm house/disco — exactly the lane.',
     genreTags: ['Funky House', 'Disco House', 'Nu-Disco', 'Vocal House'],
+    lat: 47.5145,
+    lng: 19.0795,
+    transitNote: 'M1 metro to Hősök tere (or Bolt ~8 min)',
     mapQuery: 'Pavilon Kert Budapest',
     priority: true,
   },
@@ -391,6 +430,9 @@ export const ITINERARY = [
     description: 'Riverside floating bar. Social, groovy, bright. Good fit for the night.',
     musicFit: 'Strong fit. Best fit: vocal UKG, 2-step, disco house, French touch, nu-disco, funky/vocal house, and bright danceable club music. Pontoon Saturday tends to land in disco/funky house territory.',
     genreTags: ['Funky House', 'Disco House', 'Nu-Disco', 'Indie Dance'],
+    lat: 47.4953,
+    lng: 19.0473,
+    transitNote: 'Easy walk to the Danube — or Bolt ~5 min',
     mapQuery: 'Pontoon Budapest',
     priority: true,
   },
@@ -425,6 +467,9 @@ export const ITINERARY = [
     price: 'Free',
     reserve: 'No',
     description: 'River park between Buda and Pest. Rent bikes/quads if you feel it.',
+    lat: 47.5152,
+    lng: 19.0492,
+    transitNote: 'Tram 4/6 to Margit híd (south access) — or Bolt',
     mapQuery: 'Margaret Island Budapest',
   },
   {
@@ -455,6 +500,9 @@ export const ITINERARY = [
     description: 'Long Sunday sunset session. Bright, vocal, feel-good. Goes til ~2 AM.',
     musicFit: 'Strong fit. Best fit: vocal UKG, 2-step, disco house, French touch, nu-disco, funky/vocal house, and bright danceable club music.',
     genreTags: ['Vocal House', 'Funky House', 'Nu-Disco', 'Soulful House'],
+    lat: 47.4953,
+    lng: 19.0473,
+    transitNote: 'Easy walk to the Danube — or Bolt ~5 min',
     mapQuery: 'Pontoon Budapest',
     priority: true,
   },
@@ -885,6 +933,34 @@ const PRICE_OVERRIDES = {
   'bud-0507-1600': { priceMinEUR: 0, priceMaxEUR: 0, isFree: true },     // Already booked
 };
 
+// Haversine great-circle distance in km
+function haversineKm(lat1, lng1, lat2, lng2) {
+  const R = 6371;
+  const toRad = (d) => (d * Math.PI) / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLng = toRad(lng2 - lng1);
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(a));
+}
+
+// Bucket each Budapest place into a walk-from-hostel tier so the city hub
+// can offer a Near / Walkable / Requires ride filter.
+function deriveHomeBaseDistance(c) {
+  if (c.city !== 'budapest' || typeof c.lat !== 'number' || typeof c.lng !== 'number') return;
+  const km = haversineKm(BUDAPEST_HOME_BASE.lat, BUDAPEST_HOME_BASE.lng, c.lat, c.lng);
+  // Walking pace ≈ 5 km/h ⇒ 12 min/km. Round up to nearest minute.
+  const walkMin = Math.max(1, Math.round(km * 12));
+  let tier;
+  if (walkMin <= 8) tier = 'near';
+  else if (walkMin <= 25) tier = 'walkable';
+  else tier = 'ride';
+  c.distanceFromHostelKm = Math.round(km * 10) / 10;
+  c.walkMinutesFromHostel = walkMin;
+  c.homeBaseTier = tier;
+}
+
 function deriveSortOrder(c) {
   if (typeof c.sortOrder === 'number') return c.sortOrder;
   const m = (c.time || '00:00').match(/^(\d{1,2}):(\d{2})/);
@@ -925,6 +1001,7 @@ ITINERARY.forEach((c) => {
   c.mapUrl = mapsLink(c.mapQuery || `${c.title} ${c.city}`);
   c.sortOrder = deriveSortOrder(c);
   Object.assign(c, derivePrice(c));
+  deriveHomeBaseDistance(c);
 });
 
 // Cross-field convenience: timestamp for sorting across days
