@@ -70,13 +70,14 @@ export default function BudapestMap() {
           {/* Hostel anchor pin — gold, larger, white border for visibility */}
           <CircleMarker
             center={center}
-            radius={9}
+            radius={12}
             pathOptions={{
               fillColor: '#c9a14a',
               fillOpacity: 1,
               color: '#fbf6e9',
               weight: 2,
             }}
+            bubblingMouseEvents={false}
           >
             <Tooltip direction="top" offset={[0, -8]} opacity={0.95} permanent={false}>
               <strong>{BUDAPEST_HOME_BASE.shortName}</strong> · home base
@@ -101,13 +102,14 @@ export default function BudapestMap() {
               <CircleMarker
                 key={c.id}
                 center={[c.lat, c.lng]}
-                radius={6}
+                radius={9}
                 pathOptions={{
                   fillColor: color,
                   fillOpacity: 0.95,
                   color: '#0b1320',
                   weight: 1.5,
                 }}
+                bubblingMouseEvents={false}
               >
                 <Popup>
                   <div style={{ fontSize: 12, lineHeight: 1.4, minWidth: 160 }}>
