@@ -147,19 +147,6 @@ export default function ItineraryCard({ card, isFav, isChecked, onToggleFav, onT
             </div>
           )}
 
-          {card.avoidOrder?.length > 0 && (
-            <div className="rounded-lg border border-burgundy-400/30 bg-burgundy-500/5 p-2.5">
-              <div className="text-[10px] uppercase tracking-widest font-semibold text-burgundy-400 mb-1">Avoid</div>
-              <div className="flex flex-wrap gap-1">
-                {card.avoidOrder.map((s) => (
-                  <span key={s} className="text-[11px] rounded-full px-2 py-0.5 bg-burgundy-500/10 text-cream-100/85 border border-burgundy-400/25">
-                    {s}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
-
           {card.bookingHint && (
             <div className="rounded-lg border border-gold-500/25 bg-gold-500/10 p-2.5">
               <div className="text-[10px] uppercase tracking-widest font-semibold text-gold-400 mb-1">Booking</div>

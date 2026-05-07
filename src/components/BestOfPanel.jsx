@@ -6,7 +6,6 @@ const SECTIONS = [
   { key: 'beer',      label: 'Beer',      hint: 'Drink here' },
   { key: 'nightlife', label: 'Nightlife', hint: 'Dance here' },
   { key: 'daytime',   label: 'Daytime',   hint: 'See here' },
-  { key: 'avoid',     label: 'Avoid',     hint: '' },
 ];
 
 export default function BestOfPanel({ cityId }) {
