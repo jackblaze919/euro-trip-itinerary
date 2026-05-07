@@ -36,7 +36,7 @@ export default function BestOfPanel({ cityId }) {
                   className={
                     'text-[12px] border rounded-full px-2.5 py-1 ' +
                     (isAvoid
-                      ? 'border-burgundy-400/35 bg-burgundy-500/8 text-cream-100/85'
+                      ? 'border-burgundy-400/35 bg-burgundy-500/10 text-cream-100/85'
                       : 'border-cream-100/15 bg-navy-700/40 text-cream-100/85')
                   }
                 >
@@ -62,7 +62,7 @@ export default function BestOfPanel({ cityId }) {
                 <div className="text-[10px] uppercase tracking-widest text-cream-100/45 mb-1">{k}</div>
                 <div className="flex flex-wrap gap-1.5">
                   {vs.map((v) => (
-                    <span key={v} className="text-[12px] border rounded-full px-2.5 py-1 bg-navy-700/40 border-cream-100/12 text-cream-100/80">
+                    <span key={v} className="text-[12px] border rounded-full px-2.5 py-1 bg-navy-700/40 border-cream-100/10 text-cream-100/80">
                       {v}
                     </span>
                   ))}

@@ -291,7 +291,7 @@ export default function App() {
           ].map(([name, city]) => (
             <span
               key={name}
-              className="border border-gold-500/35 bg-gold-500/8 rounded-full px-2.5 py-1 text-cream-100/90"
+              className="border border-gold-500/35 bg-gold-500/10 rounded-full px-2.5 py-1 text-cream-100/90"
             >
               <span className="font-medium">{name}</span>
               <span className="text-cream-100/45"> · {city}</span>
@@ -459,7 +459,7 @@ export default function App() {
             {favCards.map((c) => (
               <div key={c.id} className="panel rounded-xl p-3.5">
                 <div className="flex items-start gap-3">
-                  <div className="shrink-0 w-[58px] pr-2 border-r border-cream-100/8">
+                  <div className="shrink-0 w-[58px] pr-2 border-r border-cream-100/10">
                     <div className="font-display text-[22px] font-semibold leading-none tnum text-cream-50">{c.time}</div>
                     <div className="text-[10px] uppercase tracking-widest text-cream-100/40 mt-1">{c.category}</div>
                   </div>
@@ -493,7 +493,7 @@ export default function App() {
       <div className="pointer-events-none fixed inset-0 -z-20 bg-navy-900" />
 
       {/* Top bar */}
-      <header className="sticky top-0 z-20 safe-top backdrop-blur-md bg-navy-900/80 border-b border-cream-100/8">
+      <header className="sticky top-0 z-20 safe-top backdrop-blur-md bg-navy-900/80 border-b border-cream-100/10">
         <div className="mx-auto max-w-md px-4 py-3 flex items-center gap-3">
           <div className="w-7 h-7 rounded-full border border-gold-500/50 flex items-center justify-center text-gold-400 text-[14px] font-display">
             ✈
@@ -504,7 +504,7 @@ export default function App() {
               May 7 – 16, 2026
             </div>
           </div>
-          <div className="text-[10px] uppercase tracking-widest rounded-full border border-cream-100/12 bg-navy-800/60 px-2 py-1 text-cream-100/65 tnum">
+          <div className="text-[10px] uppercase tracking-widest rounded-full border border-cream-100/10 bg-navy-800/60 px-2 py-1 text-cream-100/65 tnum">
             {ITINERARY.length} stops
           </div>
         </div>

@@ -1,8 +1,7 @@
-// Europe trip — 4 guys, age 23 — May 7 to May 16, 2026
+// Europe trip — May 7 to May 16, 2026
 // Departing Berlin → Budapest → Salzburg → Munich → Amsterdam
 
 export const TRIP = {
-  party: '4 guys, age 23',
   startDate: '2026-05-07',
   endDate: '2026-05-16',
   origin: 'Berlin',
@@ -305,7 +304,7 @@ export const ITINERARY = [
     location: 'Akácfa u. 47 / Dob u. 26',
     price: '€20–35 pp',
     reserve: 'Yes',
-    description: 'Modern Israeli at Mazel Tov; old-school Jewish bistro at Macesz. Both built for our food rules.',
+    description: 'Modern Israeli at Mazel Tov; old-school Jewish bistro at Macesz. Both work great with what we eat.',
     safeOrder: ['Hummus & pita', 'Grilled chicken skewers', 'Shakshuka', 'Lamb dishes', 'Falafel'],
     avoidOrder: ['Shrimp', 'Anything with shellfish'],
     foodWarning: true,
@@ -851,7 +850,7 @@ export const ITINERARY = [
     location: 'The Loft Amsterdam',
     price: 'Ticketed',
     reserve: 'Yes',
-    description: 'Todd Terje / Kamma & Masalo lineage night. THIS is the one for our music taste.',
+    description: 'Todd Terje / Kamma & Masalo lineage night. THIS is the one for our sound.',
     musicFit: '✅✅ Funky / disco / nu-disco / soulful house. Ideal.',
     mapQuery: 'The Loft Amsterdam club',
     bookingHint: 'Buy tix the second they\'re live',

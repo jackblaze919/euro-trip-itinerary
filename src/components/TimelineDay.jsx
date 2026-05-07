@@ -32,7 +32,7 @@ export default function TimelineDay({
               'shrink-0 rounded-md px-2.5 py-1.5 text-[10px] font-semibold uppercase tracking-widest border tnum ' +
               (isToday
                 ? 'bg-gold-500 text-navy-950 border-gold-500 pulse-gold'
-                : 'bg-navy-800/60 border-cream-100/12 text-cream-100/75')
+                : 'bg-navy-800/60 border-cream-100/10 text-cream-100/75')
             }
           >
             {isToday ? 'Today' : fmtDate(date)}
@@ -50,7 +50,7 @@ export default function TimelineDay({
         <button
           onClick={() => onCopyDay(date)}
           title="Copy today's plan"
-          className="shrink-0 inline-flex items-center gap-1 rounded-full border border-cream-100/12 bg-navy-800/60 hover:border-cream-100/30 text-[11px] px-2.5 py-1.5 text-cream-100/75"
+          className="shrink-0 inline-flex items-center gap-1 rounded-full border border-cream-100/10 bg-navy-800/60 hover:border-cream-100/30 text-[11px] px-2.5 py-1.5 text-cream-100/75"
         >
           ❏ Copy
         </button>

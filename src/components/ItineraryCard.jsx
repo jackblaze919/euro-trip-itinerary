@@ -50,7 +50,7 @@ export default function ItineraryCard({ card, isFav, isHidden, isChecked, onTogg
         className="w-full text-left px-3.5 py-3 flex items-start gap-3"
       >
         {/* Time, prominent serif */}
-        <div className="shrink-0 w-[58px] pr-2 border-r border-cream-100/8">
+        <div className="shrink-0 w-[58px] pr-2 border-r border-cream-100/10">
           <div className="font-display text-[24px] font-semibold leading-none tnum text-cream-50">
             {card.time}
           </div>
@@ -78,7 +78,7 @@ export default function ItineraryCard({ card, isFav, isHidden, isChecked, onTogg
             <ReserveChip value={card.reserve} />
             {card.foodWarning && (
               <span className="inline-flex items-center gap-1 text-[10px] uppercase tracking-wider font-semibold border rounded-full px-2 py-0.5 border-burgundy-400/50 text-burgundy-400 bg-burgundy-500/10">
-                ⚠ Food rules
+                ⚠ Food warning
               </span>
             )}
             {card.priority && (
@@ -187,7 +187,7 @@ export default function ItineraryCard({ card, isFav, isHidden, isChecked, onTogg
                 'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-medium transition active:scale-[0.98] border ' +
                 (isHidden
                   ? 'bg-cream-100/10 text-cream-50 border-cream-100/30'
-                  : 'bg-transparent text-cream-100/55 border-cream-100/12 hover:border-cream-100/30')
+                  : 'bg-transparent text-cream-100/55 border-cream-100/10 hover:border-cream-100/30')
               }
             >
               {isHidden ? '↺ Unhide' : '✕ Skip'}

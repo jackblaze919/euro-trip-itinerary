@@ -1,6 +1,6 @@
 # Europe Trip · May 2026
 
-Mobile-first interactive itinerary for 4 guys traveling Berlin → Budapest → Salzburg → Munich → Amsterdam, May 7 – May 16, 2026.
+Mobile-first interactive itinerary for a Berlin → Budapest → Salzburg → Munich → Amsterdam trip, May 7 – May 16, 2026.
 
 Built with **Vite + React + TailwindCSS**. Static, no backend, no API keys.
 
@@ -61,7 +61,7 @@ npm run build
 
 ## What's inside
 
-- **Overview** — route timeline, "Up next" card, food rules, music taste, best beer/nightlife, full Book These Now checklist.
+- **Overview** — route timeline, "Up next" card, best beer / nightlife picks, full Book These Now checklist.
 - **Today** — only today's stops, with a one-tap "Copy today's plan" button.
 - **Cities** — Budapest, Salzburg, Munich, Amsterdam. Tap into a city for category filters, search, reserve-only / under-€25 toggles, day-by-day expandable timeline, Best Of and Emergency Fallbacks.
 - **Book** — pre-trip booking checklist, persisted to `localStorage`.
