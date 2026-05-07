@@ -58,21 +58,19 @@ export default function TimelineDay({
 
       {open && (
         <div className="relative pl-4">
-          {/* timeline rail — gold dotted */}
+          {/* timeline rail — clean solid hairline, aligned to pin centers */}
           <div
-            className="absolute left-[3px] top-3 bottom-3 w-px"
-            style={{
-              backgroundImage:
-                'linear-gradient(to bottom, rgba(201,161,74,0.55) 0, rgba(201,161,74,0.55) 4px, transparent 4px, transparent 8px)',
-              backgroundSize: '1px 8px',
-            }}
+            className="absolute left-[7px] top-3 bottom-3 w-px"
+            style={{ background: 'rgba(201,161,74,0.35)' }}
+            aria-hidden
           />
           <div className="space-y-3">
             {visible.map((c) => (
               <div key={c.id} className="relative">
                 <span
-                  className="absolute -left-[12px] top-5 w-2 h-2 rounded-full ring-2 ring-navy-900"
+                  className="absolute -left-[12px] top-[22px] w-2 h-2 rounded-full ring-2 ring-navy-900"
                   style={{ background: '#c9a14a' }}
+                  aria-hidden
                 />
                 <ItineraryCard
                   card={c}

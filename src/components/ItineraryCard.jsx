@@ -50,11 +50,11 @@ export default function ItineraryCard({ card, isFav, isHidden, isChecked, onTogg
         className="w-full text-left px-3.5 py-3 flex items-start gap-3"
       >
         {/* Time, prominent serif */}
-        <div className="shrink-0 w-[58px] pr-2 border-r border-cream-100/10">
+        <div className="shrink-0 w-[68px]">
           <div className="font-display text-[24px] font-semibold leading-none tnum text-cream-50">
             {card.time}
           </div>
-          <div className="text-[9px] uppercase tracking-widest text-cream-100/40 mt-1 flex items-center gap-1">
+          <div className="text-[9px] uppercase tracking-widest text-cream-100/40 mt-1.5 flex items-center gap-1">
             <span
               className="inline-block w-1.5 h-1.5 rounded-full"
               style={{ background: meta.dot }}

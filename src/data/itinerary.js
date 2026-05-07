@@ -931,19 +931,17 @@ export const BEST_OF = {
 
 // ───────────────────────── Book These Now ─────────────────────────
 // tier: 'must' | 'recommended' | 'optional'
+// Travel (flights, trains) is excluded — already booked.
 export const BOOK_NOW = [
-  { id: 'book-1',  tier: 'recommended', label: 'Budapest · Széchenyi Bath fast-track ticket', when: 'Fri May 8',   url: searchLink('Szechenyi Bath online ticket fast track') },
-  { id: 'book-2',  tier: 'recommended', label: 'Budapest · Gettó Gulyás dinner reservation', when: 'Thu May 7',   url: searchLink('Getto Gulyas Budapest reservation') },
-  { id: 'book-3',  tier: 'recommended', label: 'Budapest · Menza dinner reservation',         when: 'Fri May 8',   url: searchLink('Menza Budapest reservation') },
-  { id: 'book-4',  tier: 'recommended', label: 'Budapest · Mazel Tov lunch reservation',       when: 'Sat May 9',   url: searchLink('Mazel Tov Budapest reservation') },
-  { id: 'book-5',  tier: 'must',        label: 'Budapest · Aether SOAKIN\' tickets (verify lineup first)', when: 'Fri May 8', url: searchLink('Aether Club Budapest SOAKIN tickets') },
-  { id: 'book-6',  tier: 'must',        label: 'Budapest → Salzburg train (ÖBB / RegioJet)',  when: 'Mon May 11',  url: searchLink('OBB Budapest to Salzburg train tickets') },
-  { id: 'book-7',  tier: 'optional',    label: 'Stiegl-Brauwelt brewery tour',                  when: 'Tue May 12',  url: searchLink('Stiegl Brauwelt tour booking') },
-  { id: 'book-8',  tier: 'recommended', label: 'Salzburg → Munich train / Bayern-Ticket',       when: 'Tue May 12',  url: searchLink('Bayern Ticket Salzburg Munich') },
-  { id: 'book-9',  tier: 'recommended', label: 'Munich · Augustiner-Keller dinner',             when: 'Wed May 13',  url: searchLink('Augustiner-Keller Munich reservation') },
-  { id: 'book-10', tier: 'must',        label: 'Munich → Amsterdam flight',                     when: 'Thu May 14',  url: searchLink('Munich to Amsterdam flight') },
-  { id: 'book-11', tier: 'recommended', label: 'Amsterdam · Sampurna dinner',                   when: 'Thu May 14',  url: searchLink('Sampurna Amsterdam reservation') },
-  { id: 'book-12', tier: 'must',        label: 'Amsterdam · Brighter Days @ The Loft tickets',  when: 'Fri May 15',  url: searchLink('Brighter Days Kamma Masalo The Loft Amsterdam tickets') },
+  { id: 'book-1',  tier: 'recommended', label: 'Budapest · Széchenyi Bath fast-track ticket',                    when: 'Fri May 8',   url: searchLink('Szechenyi Bath online ticket fast track') },
+  { id: 'book-2',  tier: 'recommended', label: 'Budapest · Gettó Gulyás dinner reservation',                     when: 'Thu May 7',   url: searchLink('Getto Gulyas Budapest reservation') },
+  { id: 'book-3',  tier: 'recommended', label: 'Budapest · Menza dinner reservation',                            when: 'Fri May 8',   url: searchLink('Menza Budapest reservation') },
+  { id: 'book-4',  tier: 'recommended', label: 'Budapest · Mazel Tov lunch reservation',                         when: 'Sat May 9',   url: searchLink('Mazel Tov Budapest reservation') },
+  { id: 'book-5',  tier: 'must',        label: 'Budapest · Aether SOAKIN\' tickets (verify lineup first)',       when: 'Fri May 8',   url: searchLink('Aether Club Budapest SOAKIN tickets') },
+  { id: 'book-7',  tier: 'optional',    label: 'Stiegl-Brauwelt brewery tour',                                   when: 'Tue May 12',  url: searchLink('Stiegl Brauwelt tour booking') },
+  { id: 'book-9',  tier: 'recommended', label: 'Munich · Augustiner-Keller dinner',                              when: 'Wed May 13',  url: searchLink('Augustiner-Keller Munich reservation') },
+  { id: 'book-11', tier: 'recommended', label: 'Amsterdam · Sampurna dinner',                                    when: 'Thu May 14',  url: searchLink('Sampurna Amsterdam reservation') },
+  { id: 'book-12', tier: 'must',        label: 'Amsterdam · Brighter Days @ The Loft tickets',                   when: 'Fri May 15',  url: searchLink('Brighter Days Kamma Masalo The Loft Amsterdam tickets') },
 ];
 
 // ───────────────────────── Emergency fallbacks ─────────────────────────
