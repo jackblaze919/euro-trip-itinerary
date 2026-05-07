@@ -29,39 +29,51 @@ export default function TimelineDay({
         >
           <div
             className={
-              'shrink-0 rounded-xl px-2.5 py-1.5 text-[11px] font-bold uppercase tracking-wider border ' +
+              'shrink-0 rounded-md px-2.5 py-1.5 text-[10px] font-semibold uppercase tracking-widest border tnum ' +
               (isToday
-                ? 'bg-pink-500 text-white border-pink-400 pulse-pink'
-                : 'bg-white/5 border-white/10 text-white/80')
+                ? 'bg-gold-500 text-navy-950 border-gold-500 pulse-gold'
+                : 'bg-navy-800/60 border-cream-100/12 text-cream-100/75')
             }
           >
             {isToday ? 'Today' : fmtDate(date)}
           </div>
           <div className="flex-1 min-w-0">
-            <div className="text-sm font-semibold leading-tight truncate">{dayLabel}</div>
-            <div className="text-[11px] text-white/50">
+            <div className="font-display text-[16px] font-semibold leading-tight text-cream-50 truncate">
+              {dayLabel}
+            </div>
+            <div className="text-[11px] text-cream-100/45 tnum">
               {visible.length} stops · {totalDone}/{cards.length} done
             </div>
           </div>
-          <div className="shrink-0 text-white/40">{open ? '▾' : '▸'}</div>
+          <div className="shrink-0 text-cream-100/35 text-sm">{open ? '−' : '+'}</div>
         </button>
         <button
           onClick={() => onCopyDay(date)}
           title="Copy today's plan"
-          className="shrink-0 inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 text-[11px] px-2.5 py-1.5"
+          className="shrink-0 inline-flex items-center gap-1 rounded-full border border-cream-100/12 bg-navy-800/60 hover:border-cream-100/30 text-[11px] px-2.5 py-1.5 text-cream-100/75"
         >
-          📋 Copy
+          ❏ Copy
         </button>
       </div>
 
       {open && (
-        <div className="relative pl-3">
-          {/* timeline rail */}
-          <div className="absolute left-0 top-2 bottom-2 w-px bg-gradient-to-b from-white/30 via-white/10 to-transparent" />
+        <div className="relative pl-4">
+          {/* timeline rail — gold dotted */}
+          <div
+            className="absolute left-[3px] top-3 bottom-3 w-px"
+            style={{
+              backgroundImage:
+                'linear-gradient(to bottom, rgba(201,161,74,0.55) 0, rgba(201,161,74,0.55) 4px, transparent 4px, transparent 8px)',
+              backgroundSize: '1px 8px',
+            }}
+          />
           <div className="space-y-3">
             {visible.map((c) => (
               <div key={c.id} className="relative">
-                <span className="absolute -left-[7px] top-5 w-2.5 h-2.5 rounded-full bg-white/80 ring-2 ring-ink-900" />
+                <span
+                  className="absolute -left-[12px] top-5 w-2 h-2 rounded-full ring-2 ring-navy-900"
+                  style={{ background: '#c9a14a' }}
+                />
                 <ItineraryCard
                   card={c}
                   isFav={storage.favs.has(c.id)}
@@ -74,7 +86,7 @@ export default function TimelineDay({
               </div>
             ))}
             {visible.length === 0 && (
-              <div className="text-xs text-white/40 italic px-1 py-2">All items hidden for this day.</div>
+              <div className="text-xs text-cream-100/40 italic px-1 py-2">All items hidden for this day.</div>
             )}
           </div>
         </div>

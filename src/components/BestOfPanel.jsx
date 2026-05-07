@@ -2,20 +2,12 @@ import React from 'react';
 import { BEST_OF, FALLBACKS } from '../data/itinerary.js';
 
 const SECTIONS = [
-  { key: 'food',      label: 'Best Food',      emoji: '🍽',  color: 'amber' },
-  { key: 'beer',      label: 'Best Beer',      emoji: '🍺',  color: 'yellow' },
-  { key: 'nightlife', label: 'Best Nightlife', emoji: '🎧',  color: 'fuchsia' },
-  { key: 'daytime',   label: 'Best Daytime',   emoji: '🏛',  color: 'sky' },
-  { key: 'avoid',     label: 'What to Avoid',  emoji: '⚠️', color: 'rose' },
+  { key: 'food',      label: 'Food',      hint: 'Eat here' },
+  { key: 'beer',      label: 'Beer',      hint: 'Drink here' },
+  { key: 'nightlife', label: 'Nightlife', hint: 'Dance here' },
+  { key: 'daytime',   label: 'Daytime',   hint: 'See here' },
+  { key: 'avoid',     label: 'Avoid',     hint: '' },
 ];
-
-const colorMap = {
-  amber:   'bg-amber-500/10 text-amber-200 border-amber-400/25',
-  yellow:  'bg-yellow-500/10 text-yellow-200 border-yellow-400/25',
-  fuchsia: 'bg-fuchsia-500/10 text-fuchsia-200 border-fuchsia-400/25',
-  sky:     'bg-sky-500/10 text-sky-200 border-sky-400/25',
-  rose:    'bg-rose-500/10 text-rose-200 border-rose-400/25',
-};
 
 export default function BestOfPanel({ cityId }) {
   const data = BEST_OF[cityId];
@@ -26,17 +18,27 @@ export default function BestOfPanel({ cityId }) {
       {SECTIONS.map((s) => {
         const items = data[s.key];
         if (!items?.length) return null;
+        const isAvoid = s.key === 'avoid';
         return (
-          <div key={s.key} className="glass rounded-2xl p-3">
-            <div className="flex items-center gap-2 mb-2">
-              <span aria-hidden className="text-base">{s.emoji}</span>
-              <h3 className="text-sm font-semibold">{s.label}</h3>
+          <div key={s.key} className="panel rounded-xl p-3.5">
+            <div className="flex items-baseline justify-between mb-2">
+              <h3 className="font-display text-[15px] font-semibold text-cream-50">
+                {s.label}
+              </h3>
+              <span className={'text-[10px] uppercase tracking-widest ' + (isAvoid ? 'text-burgundy-400' : 'text-cream-100/45')}>
+                {s.hint}
+              </span>
             </div>
             <div className="flex flex-wrap gap-1.5">
               {items.map((it) => (
                 <span
                   key={it}
-                  className={'text-[12px] border rounded-full px-2.5 py-1 ' + colorMap[s.color]}
+                  className={
+                    'text-[12px] border rounded-full px-2.5 py-1 ' +
+                    (isAvoid
+                      ? 'border-burgundy-400/35 bg-burgundy-500/8 text-cream-100/85'
+                      : 'border-cream-100/15 bg-navy-700/40 text-cream-100/85')
+                  }
                 >
                   {it}
                 </span>
@@ -47,18 +49,20 @@ export default function BestOfPanel({ cityId }) {
       })}
 
       {fb && (
-        <div className="glass rounded-2xl p-3 border-dashed">
-          <div className="flex items-center gap-2 mb-2">
-            <span aria-hidden className="text-base">🛟</span>
-            <h3 className="text-sm font-semibold">Emergency Fallbacks</h3>
+        <div className="panel rounded-xl p-3.5">
+          <div className="flex items-baseline justify-between mb-2">
+            <h3 className="font-display text-[15px] font-semibold text-cream-50">
+              Emergency Fallbacks
+            </h3>
+            <span className="text-[10px] uppercase tracking-widest text-cream-100/45">If plan A fails</span>
           </div>
-          <div className="space-y-2 text-[12px]">
+          <div className="space-y-2">
             {Object.entries(fb).map(([k, vs]) => (
               <div key={k}>
-                <div className="text-[10px] uppercase tracking-wider text-white/50 mb-1">If {k} plan fails</div>
+                <div className="text-[10px] uppercase tracking-widest text-cream-100/45 mb-1">{k}</div>
                 <div className="flex flex-wrap gap-1.5">
                   {vs.map((v) => (
-                    <span key={v} className="border rounded-full px-2.5 py-1 bg-white/5 border-white/10 text-white/80">
+                    <span key={v} className="text-[12px] border rounded-full px-2.5 py-1 bg-navy-700/40 border-cream-100/12 text-cream-100/80">
                       {v}
                     </span>
                   ))}
